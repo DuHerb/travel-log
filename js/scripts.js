@@ -2,8 +2,6 @@ function Place(name, country, population) {
   this.name = name,
   this.country = country,
   this.population = population,
-  this.landmark = "",
-  this.notes = "",
   this.id = 0;
 }
 
@@ -29,29 +27,44 @@ var travelLog = new TravelLog();
 travelLog.addLocation(portland);
 travelLog.addLocation(seattle);
 
-
 function displayPlace(id) {
   $("#city-display").append("<li>" + travelLog.locations[id].name + "</li>");
   $("#city-display").append("<li>" + travelLog.locations[id].country + "</li>");
   $("#city-display").append("<li>" + travelLog.locations[id].population + "</li>");
-  $("#city-display").append("<li>" + travelLog.locations[id].landmark + "</li>");
-  $("#city-display").append("<li>" + travelLog.locations[id].notes + "</li>");
 }
 
 function displayCities(travelLog) {
   for(i=0; i<travelLog.locations.length; i++) {
     var id = travelLog.locations[i].id;
-    $("#place-list").append('<li><button class="city-button" value=' + id + '>' + travelLog.locations[i].name + '</button></li>');
+    $("#place-list").append('<li class="btn btn-dark">' + travelLog.locations[i].name + '</li>');
   };
 }
 
 $(document).ready(function() {
-  console.log(travelLog);
   displayCities(travelLog);
 
-  $('.city-button').click(function(){
-    var id = $(this).val();
+  $('#input-submit').click(function(event) {
+    event.preventDefault();
+    var nameInput = $("input[value='name']").val();
+    var countryInput = $("input[value='country']").val();
+    var populationInput = $("input[value='population']").val();
+    var newCity = new Place(nameInput, countryInput, populationInput);
+    travelLog.addLocation(newCity);
+    $('#place-list').empty();
     $('#city-display').empty();
-    $('#city-display').append(displayPlace(id-1));
-  })
+    displayCities(travelLog);
+    return;
+  });
+
+  $("#place-list").on("click", "li", function(event){
+    event.preventDefault();
+    var id = $(this).text();
+    $('#city-display').empty();
+    for(i=0; i<travelLog.locations.length; i++) {
+      if(travelLog.locations[i].name === id) {
+        var id = travelLog.locations[i].id;
+        $('#city-display').append(displayPlace(id-1));
+      }
+    }
+  });
 });
