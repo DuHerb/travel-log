@@ -1,44 +1,57 @@
-function Place() {
-  name = name,
-  country = "",
-  population = 0,
-  landmark = "",
-  notes = ""
+function Place(name, country, population) {
+  this.name = name,
+  this.country = country,
+  this.population = population,
+  this.landmark = "",
+  this.notes = "",
+  this.id = 0;
 }
 
-var visitedLocations = [];
-
-var portland = new Place();
-portland.name = "Portland";
-portland.country = "USA";
-portland.population = 600000;
-portland.landmark = "Japanese Garden";
-portland.notes = "Rains Alot";
-visitedLocations.push(portland);
-
-var seattle = new Place();
-seattle.name = "Seattle";
-seattle.country = "USA";
-seattle.population = 1000000;
-seattle.landmark = "space needle";
-seattle.notes = "Rains Alot";
-visitedLocations.push(seattle);
-
-function displayPlace(place) {
-  $("#place-display").append("<li>" + place.name + "</li>");
-  $("#place-display").append("<li>" + place.country + "</li>");
-  $("#place-display").append("<li>" + place.population + "</li>");
-  $("#place-display").append("<li>" + place.landmark + "</li>");
-  $("#place-display").append("<li>" + place.notes + "</li>");
+function TravelLog() {
+  this.locations = [],
+  this.currentId = 0
 }
 
-function displayCities(visitedLocations) {
-  for(i=0; i<visitedLocations.length; i++) {
-    $("#place-list").append('<li><button class="city-button">' + visitedLocations[i].name + '</button></li>');
+TravelLog.prototype.addLocation = function(place) {
+  place.id = this.assignId();
+  this.locations.push(place);
+}
+
+TravelLog.prototype.assignId = function() {
+  this.currentId += 1;
+  return this.currentId;
+}
+
+var portland = new Place("Portland", "USA", 600000);
+var seattle = new Place("Seattle", "USA", 1000000);
+
+var travelLog = new TravelLog();
+travelLog.addLocation(portland);
+travelLog.addLocation(seattle);
+
+
+function displayPlace(id) {
+  $("#city-display").append("<li>" + travelLog.locations[id].name + "</li>");
+  $("#city-display").append("<li>" + travelLog.locations[id].country + "</li>");
+  $("#city-display").append("<li>" + travelLog.locations[id].population + "</li>");
+  $("#city-display").append("<li>" + travelLog.locations[id].landmark + "</li>");
+  $("#city-display").append("<li>" + travelLog.locations[id].notes + "</li>");
+}
+
+function displayCities(travelLog) {
+  for(i=0; i<travelLog.locations.length; i++) {
+    var id = travelLog.locations[i].id;
+    $("#place-list").append('<li><button class="city-button" value=' + id + '>' + travelLog.locations[i].name + '</button></li>');
   };
 }
 
 $(document).ready(function() {
-  console.log(visitedLocations);
-  displayCities(visitedLocations);
+  console.log(travelLog);
+  displayCities(travelLog);
+
+  $('.city-button').click(function(){
+    var id = $(this).val();
+    $('#city-display').empty();
+    $('#city-display').append(displayPlace(id-1));
+  })
 });
